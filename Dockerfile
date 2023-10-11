@@ -25,6 +25,6 @@ RUN npm install --only=production
 
 COPY . .
 # get build files from development
-COPY --from=development /usr/src/app/.next ./next
+COPY --from=development /usr/src/app/.next ./.next
 
 CMD [ "npm", "run", "start"]
