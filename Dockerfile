@@ -1,30 +1,37 @@
+# SECTION Development
 FROM node:18 AS development
 
-WORKDIR /usr/src/app
+WORKDIR /app
+
+# Install pnpm
+RUN npm install -g pnpm
 
 COPY package*.json ./
 
-RUN npm install
+RUN pnpm install
 
 COPY . .
-
+# it functions as a type of documentation, does not affect the build process
 EXPOSE 3000
 
-RUN npm run build
+CMD ["pnpm", "run", "dev"]
 
+# SECTION Production
 FROM node:18 AS production
 
 ARG NODE_ENV=production
+
 ENV NODE_ENV=${NODE_ENV}
 
 WORKDIR /usr/src/app
 
 COPY package*.json ./
+
 # install only production dependencies
-RUN npm install --only=production
+RUN pnpm install --only=production
 
 COPY . .
 # get build files from development
-COPY --from=development /usr/src/app/.next ./.next
+COPY --from=development /app/.next ./.next
 
-CMD [ "npm", "run", "start"]
+CMD [ "pnpm", "run", "start"]
